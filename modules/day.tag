@@ -23,6 +23,65 @@
             }.bind(this));
         };
 
+        /**
+         * Calculating available time slots for the day
+         * @param {Array.<Object>}
+         * @returns {Array.<Object>}
+         */
+        this.getAvailableTimeSlots = function (unavailableTimeSlots) {
+            var _startTime = this.opts.day.date.setHours(this.opts.settings.hours[0]),
+                _lastHour = this.opts.settings.hours.length-1,
+                _endTime =this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]),
+
+                startTime = new Date(_startTime),
+                endTime = new Date(_endTime);
+
+            // generate array with size of minutes between start and end dates
+            var minutesList = (new Array(this.parent.minutesBetweenDates(endTime, startTime))).fill(0);
+
+            // intersect unavailable minutes
+            unavailableTimeSlots.forEach(function(slot){
+                // get start position of slot relatively to day start
+                var slotStartPosition = this.parent.minutesBetweenDates(slot.start, startTime);
+
+                // get slot durations in minutes
+                var slotDuration = this.parent.minutesBetweenDates(slot.end, slot.start);
+
+                // mark slots positions in `placeholder`
+                for (var i = slotStartPosition; i < (slotStartPosition+slotDuration); i++) {
+                    minutesList[i]=1;
+                }
+            }.bind(this));
+
+            // build list of available time ranges from intersection
+            var availableTimeSlots = [],
+                    timePointer = null;
+
+            minutesList.push(1);
+            minutesList.forEach(function(minuteMarker, index){
+                if (minuteMarker === 0) {
+                    if (timePointer === null) {
+                        timePointer = {
+                            start: startTime.setMinutes(index),
+                            end: startTime.setMinutes(index)
+                        };
+                    } else {
+                        timePointer.end = startTime.setMinutes(index);
+                    }
+                }
+                if (minuteMarker === 1) {
+                    if (timePointer !== null) {
+                        availableTimeSlots.push(timePointer);
+                        timePointer = null;
+                    }
+                }
+            });
+
+            return availableTimeSlots;
+        };
+
+        console.log(this.getAvailableTimeSlots(this.unavailableTimeSlots));
+
         // updating hour height according to settings
         this.on("mount", this.parent.applySettingsToElementHeight("hour"));
 

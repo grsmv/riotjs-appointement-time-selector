@@ -4,9 +4,15 @@
 
     <script>
         this.settings = {
+            // visual settings
             lineHeight: 45,
+
+            // time settings
             hours: [9, 10, 11, 12, 13, 14, 15, 16, 17],
             minimumAppointmentDuration: 15,
+            stepBetweenAppointments: 5,
+
+            // sample data
             days: [
                 {
                     title: "пн",
@@ -43,9 +49,14 @@
                 {
                     start: new Date("Tue Aug 23 2016 10:00:00 GMT+0300 (EEST)"),
                     end: new Date("Tue Aug 23 2016 10:30:00 GMT+0300 (EEST)")
-                }, {
+                },
+                {
                     start: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)"),
                     end: new Date("Tue Aug 23 2016 13:00:00 GMT+0300 (EEST)")
+                },
+                {
+                    start: new Date("Fri Aug 24 2016 15:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Fri Aug 24 2016 18:00:00 GMT+0300 (EEST)")
                 }
             ]
         };

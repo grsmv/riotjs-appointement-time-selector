@@ -9,6 +9,55 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
             }.bind(this));
         };
 
+        this.getAvailableTimeSlots = function (unavailableTimeSlots) {
+            var _startTime = this.opts.day.date.setHours(this.opts.settings.hours[0]),
+                _lastHour = this.opts.settings.hours.length-1,
+                _endTime =this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]),
+
+                startTime = new Date(_startTime),
+                endTime = new Date(_endTime);
+
+            var minutesList = (new Array(this.parent.minutesBetweenDates(endTime, startTime))).fill(0);
+
+            unavailableTimeSlots.forEach(function(slot){
+
+                var slotStartPosition = this.parent.minutesBetweenDates(slot.start, startTime);
+
+                var slotDuration = this.parent.minutesBetweenDates(slot.end, slot.start);
+
+                for (var i = slotStartPosition; i < (slotStartPosition+slotDuration); i++) {
+                    minutesList[i]=1;
+                }
+            }.bind(this));
+
+            var availableTimeSlots = [],
+                    timePointer = null;
+
+            minutesList.push(1);
+            minutesList.forEach(function(minuteMarker, index){
+                if (minuteMarker === 0) {
+                    if (timePointer === null) {
+                        timePointer = {
+                            start: startTime.setMinutes(index),
+                            end: startTime.setMinutes(index)
+                        };
+                    } else {
+                        timePointer.end = startTime.setMinutes(index);
+                    }
+                }
+                if (minuteMarker === 1) {
+                    if (timePointer !== null) {
+                        availableTimeSlots.push(timePointer);
+                        timePointer = null;
+                    }
+                }
+            });
+
+            return availableTimeSlots;
+        };
+
+        console.log(this.getAvailableTimeSlots(this.unavailableTimeSlots));
+
         this.on("mount", this.parent.applySettingsToElementHeight("hour"));
 
         this.on("mount", function(){
@@ -21,9 +70,13 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
 }, '{ }');
 riot.tag2('manager', '<week settings="{settings}"></week>', 'manager week,[riot-tag="manager"] week { width: 100%; display: block; }', '', function(opts) {
         this.settings = {
+
             lineHeight: 45,
+
             hours: [9, 10, 11, 12, 13, 14, 15, 16, 17],
             minimumAppointmentDuration: 15,
+            stepBetweenAppointments: 5,
+
             days: [
                 {
                     title: "пн",
@@ -60,9 +113,14 @@ riot.tag2('manager', '<week settings="{settings}"></week>', 'manager week,[riot-
                 {
                     start: new Date("Tue Aug 23 2016 10:00:00 GMT+0300 (EEST)"),
                     end: new Date("Tue Aug 23 2016 10:30:00 GMT+0300 (EEST)")
-                }, {
+                },
+                {
                     start: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)"),
                     end: new Date("Tue Aug 23 2016 13:00:00 GMT+0300 (EEST)")
+                },
+                {
+                    start: new Date("Fri Aug 24 2016 15:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Fri Aug 24 2016 18:00:00 GMT+0300 (EEST)")
                 }
             ]
         };

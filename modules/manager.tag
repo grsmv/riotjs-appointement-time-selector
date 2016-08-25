@@ -16,47 +16,51 @@
             days: [
                 {
                     title: "пн",
-                    date: new Date("Mon Aug 20 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Mon Aug 22 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "вт",
-                    date: new Date("Tue Aug 21 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Tue Aug 23 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "ср",
-                    date: new Date("Wed Aug 22 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Wed Aug 24 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "чт",
-                    date: new Date("Thu Aug 23 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Thu Aug 25 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "пт",
-                    date: new Date("Fri Aug 24 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Fri Aug 26 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "сб",
-                    date: new Date("Sat Aug 25 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Sat Aug 27 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "нд",
-                    date: new Date("Sun Aug 26 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Sun Aug 28 2016 00:00:00 GMT+0300 (EEST)")
                 }
             ],
             unavailableTime: [
                 {
-                    start: new Date("Mon Aug 20 2016 10:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Mon Aug 20 2016 18:00:00 GMT+0300 (EEST)")
+                    start: new Date("Mon Aug 22 2016 10:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Mon Aug 22 2016 18:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 21 2016 09:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 21 2016 12:00:00 GMT+0300 (EEST)")
+                    start: new Date("Tue Aug 23 2016 09:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 23 2016 10:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 23 2016 10:30:00 GMT+0300 (EEST)")
+                    start: new Date("Wed Aug 24 2016 10:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Wed Aug 24 2016 10:30:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 23 2016 13:00:00 GMT+0300 (EEST)")
+                    start: new Date("Wed Aug 24 2016 12:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Wed Aug 24 2016 13:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Fri Aug 24 2016 15:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Fri Aug 24 2016 18:00:00 GMT+0300 (EEST)")
+                    start: new Date("Fri Aug 26 2016 15:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Fri Aug 26 2016 18:00:00 GMT+0300 (EEST)")
+                },
+                {
+                    start: new Date("Sat Aug 27 2016 11:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Sat Aug 27 2016 14:00:00 GMT+0300 (EEST)")
                 }
             ]
         };

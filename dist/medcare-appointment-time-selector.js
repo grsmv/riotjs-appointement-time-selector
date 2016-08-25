@@ -12,7 +12,7 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
         this.getAvailableTimeSlots = function (unavailableTimeSlots) {
             var _startTime = this.opts.day.date.setHours(this.opts.settings.hours[0]),
                 _lastHour = this.opts.settings.hours.length-1,
-                _endTime =this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]),
+                _endTime = this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]),
 
                 startTime = new Date(_startTime),
                 endTime = new Date(_endTime);
@@ -23,7 +23,7 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
 
                 var slotStartPosition = this.parent.minutesBetweenDates(slot.start, startTime);
 
-                var slotDuration = this.parent.minutesBetweenDates(slot.end, slot.start);
+                var slotDuration = this.parent.minutesBetweenDates(slot.end, slot.start)+1;
 
                 for (var i = slotStartPosition; i < (slotStartPosition+slotDuration); i++) {
                     minutesList[i]=1;
@@ -38,11 +38,11 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
                 if (minuteMarker === 0) {
                     if (timePointer === null) {
                         timePointer = {
-                            start: startTime.setMinutes(index),
-                            end: startTime.setMinutes(index)
+                            start: (new Date(startTime)).setMinutes(index),
+                            end: (new Date(startTime)).setMinutes(index)
                         };
                     } else {
-                        timePointer.end = startTime.setMinutes(index);
+                        timePointer.end = (new Date(startTime)).setMinutes(index);
                     }
                 }
                 if (minuteMarker === 1) {
@@ -53,10 +53,50 @@ riot.tag2('day', '<heading>{opts.day.title}</heading> <hour each="{hour in opts.
                 }
             });
 
-            return availableTimeSlots;
+            return availableTimeSlots.map(function(f){
+                return {
+                    start: new Date(f.start),
+                    end: new Date(f.end),
+                }
+            });
         };
 
-        console.log(this.getAvailableTimeSlots(this.unavailableTimeSlots));
+        this.getListOfPotentialAppointment = function(availableTimeSlots) {
+            var potentialAppointments = [];
+
+            availableTimeSlots.forEach(function(timeSlot){
+                var minutes = this.parent.minutesBetweenDates(timeSlot.end, timeSlot.start),
+                    duration = this.parent.settings.minimumAppointmentDuration,
+                    step = this.parent.settings.stepBetweenAppointments;
+
+                var max = Math.floor((minutes - duration) / step + 1);
+                for (var i = 0; i < max; i++) {
+                    var start = (new Date(timeSlot.start)).setMinutes(timeSlot.start.getMinutes() + step * i);
+                    var end = (new Date(start)).setMinutes(new Date(start).getMinutes() + duration);
+                    appointment = {
+                        start: start,
+                        end: end
+                    };
+                    potentialAppointments.push(appointment);
+                }
+
+            }.bind(this));
+
+            potentialAppointments = potentialAppointments.map(function(f){
+                return {
+                    start: new Date(f.start),
+                    end: new Date(f.end)
+                }
+            });
+
+            console.log(potentialAppointments);
+            debugger;
+
+            return potentialAppointments;
+        };
+
+        var availableTimeSlots = this.getAvailableTimeSlots(this.unavailableTimeSlots);
+        this.getListOfPotentialAppointment(availableTimeSlots);
 
         this.on("mount", this.parent.applySettingsToElementHeight("hour"));
 
@@ -80,47 +120,51 @@ riot.tag2('manager', '<week settings="{settings}"></week>', 'manager week,[riot-
             days: [
                 {
                     title: "пн",
-                    date: new Date("Mon Aug 20 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Mon Aug 22 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "вт",
-                    date: new Date("Tue Aug 21 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Tue Aug 23 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "ср",
-                    date: new Date("Wed Aug 22 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Wed Aug 24 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "чт",
-                    date: new Date("Thu Aug 23 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Thu Aug 25 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "пт",
-                    date: new Date("Fri Aug 24 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Fri Aug 26 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "сб",
-                    date: new Date("Sat Aug 25 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Sat Aug 27 2016 00:00:00 GMT+0300 (EEST)")
                 }, {
                     title: "нд",
-                    date: new Date("Sun Aug 26 2016 00:00:00 GMT+0300 (EEST)")
+                    date: new Date("Sun Aug 28 2016 00:00:00 GMT+0300 (EEST)")
                 }
             ],
             unavailableTime: [
                 {
-                    start: new Date("Mon Aug 20 2016 10:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Mon Aug 20 2016 18:00:00 GMT+0300 (EEST)")
+                    start: new Date("Mon Aug 22 2016 10:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Mon Aug 22 2016 18:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 21 2016 09:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 21 2016 12:00:00 GMT+0300 (EEST)")
+                    start: new Date("Tue Aug 23 2016 09:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 23 2016 10:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 23 2016 10:30:00 GMT+0300 (EEST)")
+                    start: new Date("Wed Aug 24 2016 10:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Wed Aug 24 2016 10:30:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Tue Aug 23 2016 13:00:00 GMT+0300 (EEST)")
+                    start: new Date("Wed Aug 24 2016 12:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Wed Aug 24 2016 13:00:00 GMT+0300 (EEST)")
                 },
                 {
-                    start: new Date("Fri Aug 24 2016 15:00:00 GMT+0300 (EEST)"),
-                    end: new Date("Fri Aug 24 2016 18:00:00 GMT+0300 (EEST)")
+                    start: new Date("Fri Aug 26 2016 15:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Fri Aug 26 2016 18:00:00 GMT+0300 (EEST)")
+                },
+                {
+                    start: new Date("Sat Aug 27 2016 11:00:00 GMT+0300 (EEST)"),
+                    end: new Date("Sat Aug 27 2016 14:00:00 GMT+0300 (EEST)")
                 }
             ]
         };

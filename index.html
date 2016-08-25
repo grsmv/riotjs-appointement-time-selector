@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- dependencies -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/riot/riot.js"></script>
+    <link rel="stylesheet" href="bower_components/kube/dist/css/kube.css">
+
+    <!-- script -->
+    <script src="dist/medcare-appointment-time-selector.js"></script>
+    <title>Document</title>
+
+    <script>
+        window.addEventListener("load", function(){
+            riot.mount("manager")
+        });
+    </script>
+</head>
+<body>
+    <manager></manager>
+</body>
+</html>

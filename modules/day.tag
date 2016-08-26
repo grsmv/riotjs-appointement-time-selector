@@ -1,5 +1,12 @@
-<day>
+<day style="position: relative;">
     <heading>{opts.day.title}</heading>
+
+    <draft-appointment each={appointment in draftAppointments}
+                       offset={appointment.offset}
+                       height={appointment.height}
+                       start={appointment.start.toString()}
+                       end={appointment.end.toString()}>
+    </draft-appointment>
 
     <hour each={hour in opts.settings.hours}>
         <time-slot each={slot in filterTimeSlots(hour)}
@@ -23,6 +30,9 @@
             }.bind(this));
         };
 
+        this.dayStartTime = null;
+        this.dayEndTime = null;
+
         /**
          * Calculating available time slots for the day
          * @param {Array.<Object>}
@@ -31,18 +41,18 @@
         this.getAvailableTimeSlots = function (unavailableTimeSlots) {
             var _startTime = this.opts.day.date.setHours(this.opts.settings.hours[0]),
                 _lastHour = this.opts.settings.hours.length-1,
-                _endTime = this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]),
+                _endTime = this.opts.day.date.setHours(this.opts.settings.hours[_lastHour]+1);
 
-                startTime = new Date(_startTime),
-                endTime = new Date(_endTime);
+            this.dayStartTime = new Date(_startTime);
+            this.dayEndTime = new Date(_endTime);
 
             // generate array with size of minutes between start and end dates
-            var minutesList = (new Array(this.parent.minutesBetweenDates(endTime, startTime))).fill(0);
+            var minutesList = (new Array(this.parent.minutesBetweenDates(this.dayEndTime, this.dayStartTime))).fill(0);
 
             // intersect unavailable minutes
             unavailableTimeSlots.forEach(function(slot){
                 // get start position of slot relatively to day start
-                var slotStartPosition = this.parent.minutesBetweenDates(slot.start, startTime);
+                var slotStartPosition = this.parent.minutesBetweenDates(slot.start, this.dayStartTime);
 
                 // get slot durations in minutes
                 var slotDuration = this.parent.minutesBetweenDates(slot.end, slot.start)+1;
@@ -62,11 +72,11 @@
                 if (minuteMarker === 0) {
                     if (timePointer === null) {
                         timePointer = {
-                            start: (new Date(startTime)).setMinutes(index),
-                            end: (new Date(startTime)).setMinutes(index)
+                            start: (new Date(this.dayStartTime)).setMinutes(index),
+                            end: (new Date(this.dayStartTime)).setMinutes(index)
                         };
                     } else {
-                        timePointer.end = (new Date(startTime)).setMinutes(index);
+                        timePointer.end = (new Date(this.dayStartTime)).setMinutes(index);
                     }
                 }
                 if (minuteMarker === 1) {
@@ -75,12 +85,12 @@
                         timePointer = null;
                     }
                 }
-            });
+            }.bind(this));
 
             return availableTimeSlots.map(function(f){
                 return {
                     start: new Date(f.start),
-                    end: new Date(f.end),
+                    end: new Date(f.end)
                 }
             });
         };
@@ -93,55 +103,80 @@
         this.getListOfPotentialAppointment = function(availableTimeSlots) {
             var potentialAppointments = [];
 
+            var pixelsInMinute = this.parent.settings.lineHeight / 60;
+            var appointmentHeight = this.parent.settings.minimumAppointmentDuration * pixelsInMinute;
+
             availableTimeSlots.forEach(function(timeSlot){
                 var minutes = this.parent.minutesBetweenDates(timeSlot.end, timeSlot.start), // h
                     duration = this.parent.settings.minimumAppointmentDuration,              // l
                     step = this.parent.settings.stepBetweenAppointments;                     // s
 
+                // (h - l) / s + 1
                 var max = Math.floor((minutes - duration) / step + 1);
                 for (var i = 0; i < max; i++) {
                     var start = (new Date(timeSlot.start)).setMinutes(timeSlot.start.getMinutes() + step * i);
                     var end = (new Date(start)).setMinutes(new Date(start).getMinutes() + duration);
-                    appointment = {
-                        start: start,
-                        end: end
-                    };
-                    potentialAppointments.push(appointment);
-                }
+                    var offsetInHours = this.parent.hoursBetweenDates(start, this.dayStartTime);
+                    var offsetInMinutes = this.parent.minutesBetweenDates(start, this.dayStartTime);
 
+                    potentialAppointments.push({
+                        start: start,
+                        end: end,
+                        offset: offsetInMinutes * pixelsInMinute
+                    });
+                }
             }.bind(this));
 
-            potentialAppointments = potentialAppointments.map(function(f){
+            potentialAppointments = potentialAppointments.map(function(pa){
                 return {
-                    start: new Date(f.start),
-                    end: new Date(f.end)
+                    start:  new Date(pa.start),
+                    end:    new Date(pa.end),
+                    offset: pa.offset,
+                    height: appointmentHeight
                 }
             });
-
-            console.log(potentialAppointments);
-            debugger;
 
             return potentialAppointments;
         };
 
-        var availableTimeSlots = this.getAvailableTimeSlots(this.unavailableTimeSlots);
-        this.getListOfPotentialAppointment(availableTimeSlots);
+        this.draftAppointments = this.getListOfPotentialAppointment(
+                this.getAvailableTimeSlots(this.unavailableTimeSlots)
+        );
 
         // updating hour height according to settings
         this.on("mount", this.parent.applySettingsToElementHeight("hour"));
 
-        // updating unavailable-time-slots height proportionally to a `hour` element height
+
         this.on("mount", function(){
+
+            // updating unavailable-time-slots height proportionally to a `hour` element height
             [].slice.call(this.root.querySelectorAll("time-slot")).forEach(function(slot){
                 var minutesInPercents = +slot.getAttribute("minutes-duration") / 60 * 100,
                     hoursInPercents = +slot.getAttribute("hours-duration") * 2;
                 slot.style.height =  minutesInPercents + hoursInPercents + "%";
             });
+
+            // updating draft-appointment height and  position
+            [].slice.call(this.root.querySelectorAll("draft-appointment")).forEach(function(appointment){
+                var height = appointment.getAttribute("height");
+                appointment.style.height = height + "px";
+
+                var offset = appointment.getAttribute("offset");
+                appointment.style.marginTop = offset + "px";
+            });
+
+            // working with clicks on draft-appointments
+            this.root.addEventListener("click", function(event){
+                if (event.target.tagName === "DRAFT-APPOINTMENT") {
+                    var appointment = event.target;
+                    appointment.className = "permanent";
+                }
+            })
         }.bind(this));
     </script>
 
     <style>
-        heading, hour, time-slot {
+        heading, hour, time-slot, draft-appointment {
             display: block;
         }
 
@@ -161,5 +196,18 @@
             height: 50%;
             background: #eee;
         }
+
+        draft-appointment {
+            position: absolute;
+            background: yellowgreen;
+            opacity: 0;
+            width: 100%;
+            cursor: pointer;
+            /*transition: opacity 0.1s;*/
+        }
+
+            draft-appointment:hover, draft-appointment.permanent {
+                opacity: 1;
+            }
     </style>
 </day>

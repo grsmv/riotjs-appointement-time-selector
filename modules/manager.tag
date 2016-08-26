@@ -9,7 +9,7 @@
 
             // time settings
             hours: [9, 10, 11, 12, 13, 14, 15, 16, 17],
-            minimumAppointmentDuration: 15,
+            minimumAppointmentDuration: 30,
             stepBetweenAppointments: 5,
 
             // sample data

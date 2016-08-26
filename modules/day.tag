@@ -116,7 +116,6 @@
                 for (var i = 0; i < max; i++) {
                     var start = (new Date(timeSlot.start)).setMinutes(timeSlot.start.getMinutes() + step * i);
                     var end = (new Date(start)).setMinutes(new Date(start).getMinutes() + duration);
-                    var offsetInHours = this.parent.hoursBetweenDates(start, this.dayStartTime);
                     var offsetInMinutes = this.parent.minutesBetweenDates(start, this.dayStartTime);
 
                     potentialAppointments.push({
@@ -143,11 +142,10 @@
                 this.getAvailableTimeSlots(this.unavailableTimeSlots)
         );
 
-        // updating hour height according to settings
-        this.on("mount", this.parent.applySettingsToElementHeight("hour"));
-
-
         this.on("mount", function(){
+
+            // updating hour height according to settings
+            this.parent.applySettingsToElementHeight("hour").bind(this)();
 
             // updating unavailable-time-slots height proportionally to a `hour` element height
             [].slice.call(this.root.querySelectorAll("time-slot")).forEach(function(slot){
@@ -156,8 +154,11 @@
                 slot.style.height =  minutesInPercents + hoursInPercents + "%";
             });
 
+            var dayDraftAppointments  = [].slice.call(this.root.querySelectorAll("draft-appointment"));
+            var weekDraftAppointments = [].slice.call(this.parent.root.querySelectorAll("draft-appointment"));
+
             // updating draft-appointment height and  position
-            [].slice.call(this.root.querySelectorAll("draft-appointment")).forEach(function(appointment){
+            dayDraftAppointments.forEach(function(appointment){
                 var height = appointment.getAttribute("height");
                 appointment.style.height = height + "px";
 
@@ -168,10 +169,17 @@
             // working with clicks on draft-appointments
             this.root.addEventListener("click", function(event){
                 if (event.target.tagName === "DRAFT-APPOINTMENT") {
+
+                    weekDraftAppointments.forEach(function (app) {
+                        app.className = "";
+                    });
+
                     var appointment = event.target;
                     appointment.className = "permanent";
+
+                    this.selectedDate.trigger("change", new Date(event.target.getAttribute("start")))
                 }
-            })
+            }.bind(this));
         }.bind(this));
     </script>
 
@@ -203,11 +211,15 @@
             opacity: 0;
             width: 100%;
             cursor: pointer;
-            /*transition: opacity 0.1s;*/
         }
 
-            draft-appointment:hover, draft-appointment.permanent {
+            draft-appointment:hover{
+                opacity: 0.7;
+            }
+
+            draft-appointment.permanent {
                 opacity: 1;
+                transition: opacity 0.5s;
             }
     </style>
 </day>

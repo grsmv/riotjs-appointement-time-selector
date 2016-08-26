@@ -1,4 +1,6 @@
 <week>
+    <week-header></week-header>
+
     <hour-titles>
         <div each={hour in opts.settings.hours}>{hour}</div>
     </hour-titles>

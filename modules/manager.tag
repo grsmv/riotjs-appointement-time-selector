@@ -12,6 +12,21 @@
             minimumAppointmentDuration: 30,
             stepBetweenAppointments: 5,
 
+            currentWeekNumber: 34,
+            links: {
+                nextWeek: "2016/35",
+                previousWeek: "2016/33"
+            },
+
+            // i18n
+            i18n: {
+                previousWeek: "Попередній тиждень",
+                nextWeek: "Наступний тиждень",
+                selectedTime: "обраний час",
+                weekTitle: "22 - 28 серпня 2016",
+                month: ["січня", "лютого","березня","квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"]
+            },
+
             // sample data
             days: [
                 {
@@ -111,7 +126,36 @@
              */
             hoursBetweenDates: function(a, b) {
                 return this.minutesBetweenDates(a, b) / 60;
-            }
+            },
+
+            /**
+             * Formatting numbers for kitchen clock
+             * @param string
+             * @returns {string}
+             */
+            formatNumber: function(_number) {
+                var number = String(_number);
+                return number.length < 2 ? "0" + number : number
+            },
+
+            /**
+             * Performing async http GET request
+             * @param string
+             * @param function
+             */
+            get: function(url, callback) {
+                var http = new XMLHttpRequest();
+                http.onreadystatechange = function() {
+                    if (http.readyState === 4 && http.status === 200) {
+                        callback(http.responseText);
+                    }
+                    http.open("GET", url, true);
+                    http.send(null);
+                }
+            },
+
+            //
+            selectedDate: riot.observable(),
         });
     </script>
 

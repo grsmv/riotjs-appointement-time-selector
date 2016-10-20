@@ -1,0 +1,72 @@
+{
+    "lineHeight": 45,
+
+    "hours": [9, 10, 11, 12, 13, 14, 15, 16, 17],
+    "minimumAppointmentDuration": 30,
+    "stepBetweenAppointments": 5,
+
+    "currentWeekNumber": 34,
+    "links": {
+        "next": "2016/35",
+        "previous": "2016/33"
+    },
+
+    "i18n": {
+        "previousWeek": "Попередній тиждень",
+        "nextWeek": "Наступний тиждень",
+        "selectedTime": "обраний час",
+        "weekTitle": "22 - 28 серпня 2016",
+        "month": ["січня", "лютого","березня","квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"]
+    },
+
+    "days": [
+        {
+            "title": "пн",
+            "date": "Mon Aug 22 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "вт",
+            "date": "Tue Aug 23 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "ср",
+            "date": "Wed Aug 24 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "чт",
+            "date": "Thu Aug 25 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "пт",
+            "date": "Fri Aug 26 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "сб",
+            "date": "Sat Aug 27 2016 00:00:00 GMT+0300 (EEST)"
+        }, {
+            "title": "нд",
+            "date": "Sun Aug 28 2016 00:00:00 GMT+0300 (EEST)"
+        }
+    ],
+    "unavailableTime": [
+        {
+            "start": "Mon Aug 22 2016 10:00:00 GMT+0300 (EEST)",
+            "end":   "Mon Aug 22 2016 18:00:00 GMT+0300 (EEST)"
+        },
+        {
+            "start": "Tue Aug 23 2016 09:00:00 GMT+0300 (EEST)",
+            "end":   "Tue Aug 23 2016 12:00:00 GMT+0300 (EEST)"
+        },
+        {
+            "start": "Wed Aug 24 2016 10:00:00 GMT+0300 (EEST)",
+            "end":   "Wed Aug 24 2016 10:30:00 GMT+0300 (EEST)"
+        },
+        {
+            "start": "Wed Aug 24 2016 12:00:00 GMT+0300 (EEST)",
+            "end":   "Wed Aug 24 2016 13:00:00 GMT+0300 (EEST)"
+        },
+        {
+            "start": "Fri Aug 26 2016 15:00:00 GMT+0300 (EEST)",
+            "end":   "Fri Aug 26 2016 18:00:00 GMT+0300 (EEST)"
+        },
+        {
+            "start": "Sat Aug 27 2016 11:00:00 GMT+0300 (EEST)",
+            "end":   "Sat Aug 27 2016 14:00:00 GMT+0300 (EEST)"
+        }
+    ]
+}
